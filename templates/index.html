@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+    <link href="/static/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha384-nLAp+de5I6u9zVYj8FfCspc5LSSic0lOUdA5aM+gcbC2OEhCxCUsMY7xwDdIVhUU" crossorigin="anonymous">
+    <title>Weather App</title>
+</head>
+<body>
+<div class="header">
+    <h1>
+        &#9728;
+        Latest Temperatures
+        &#9728;
+    </h1>
+</div>
+<div class="container">
+   <div class="section" id="add-city-temp">
+    {% block body %}
+    <h2>Add a City's Current Temperature</h2>
+    <form action="/" method="post">
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" required>
+        <input type="submit" value="Fetch Temperature" name="button">
+    </form>
+
+    {% if temperature and selected_city %}
+        {% if temperature[0] is not none %}
+            <div class="tempe-result">
+                <p>The latest temperature in {{ selected_city }} is {{ temperature[0] | round(2) }} °C</p>
+            </div>
+        {% else %}
+            <div class="error-message">
+                <p>Unable to fetch temperature data for {{ selected_city }}</p>
+            </div>
+        {% endif %}
+    {% endif %}
+    </div>
+    <div class="section">
+
+    <b>Average Temperature</b>
+    <form action="/average_temp/" method="get">
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" required>
+
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" required>
+
+        <input type="submit" value="Calculate Average Temperature" name="button">
+    </form>
+        {% if average_temp %}
+            <p>Average temperature from {{ start_date.strftime('%m/%d/%Y') }} to {{ end_date.strftime('%m/%d/%Y') }} is: {{ average_temp | round(2) }} °C</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="section">
+    <h2>Weather Entries</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>City</th>
+            <th>Temperature</th>
+            <th>Description</th>
+            <th>Icon</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for entry in weather_entries %}
+        <tr>
+            {% set icon_code = entry.icon or '01d' %}
+            {% set icon_url = 'http://openweathermap.org/img/w/' + icon_code + '.png' %}
+            <td>{{ entry.city }}</td>
+            <td>{{ entry.temperature | round(2) }}°C</td>
+            <td>{{ entry.description }}</td>
+            <td><img src="{{ icon_url }}" alt="Weather Icon"></td>
+            <td>{{ entry.date_time.strftime('%m/%d/%Y') }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
+</body>
+</html>

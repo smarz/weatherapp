@@ -1,0 +1,8 @@
+Flask
+requests
+psycopg2-binary
+psycopg2
+Flask-SQLAlchemy
+pytest
+prometheus-flask-exporter
+waitress
